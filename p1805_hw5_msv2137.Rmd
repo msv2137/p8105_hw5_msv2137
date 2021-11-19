@@ -45,4 +45,27 @@ homicide_df =
   filter(city_state != "TulsaAL")
 ```
 
+```{r}
+#focus on baltimore
+
+#baltimore df
+baltimore_df = 
+  homicide_df %>%
+  filter(city_state == "BaltimoreMD")
+
+baltimore_summary = 
+  baltimore_df %>%
+  summarize(
+    unsolved = sum(resolution == "unsolved"),
+    n = n()
+  )
+
+baltimore_test =
+  prop.test(
+    x = baltimore_summary %>% pull(unsolved), 
+    n = baltimore_summary %>% pull(n))
+
+baltimore_test %>%
+  broom::tidy()
+```
 
