@@ -46,6 +46,17 @@ homicide_df =
 ```
 
 ```{r}
+#summarize within cities to obtain the total number of homicides and the number of unsolved homicides (those for which the disposition is “Closed without arrest” or “Open/No arrest”).
+homicide_df %>%
+  group_by(city_state) %>%
+  summarize(
+    unsolved = sum(resolution == "unsolved"),
+    n = n()
+  )
+```
+
+
+```{r}
 #focus on baltimore
 
 #baltimore df
