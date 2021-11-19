@@ -33,7 +33,10 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
 # Problem 1
 
 ```{r}
+homicide_df =
+  read_csv("./data/homicide-data.csv", na = c("", "Unknown"))
 
+View(homicide_df)
 ```
 
 
