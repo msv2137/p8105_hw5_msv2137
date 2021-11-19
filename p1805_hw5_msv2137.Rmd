@@ -155,3 +155,15 @@ files_df =
 files_df
 ```
 
+```{r}
+# Make a spaghetti plot showing observations on each subject over time, and comment on differences between groups.
+
+files_df %>%
+  ggplot(aes(x = week, y = observation, color = id, linetype = arm)) +
+  geom_line() + 
+  labs(
+    title = "Observation of Control and Experimental Groups Over 8 Weeks",
+    x = "Week",
+    y = "Observation")
+```
+Comment on the differences between the two groups.
