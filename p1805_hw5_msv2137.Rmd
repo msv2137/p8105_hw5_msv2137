@@ -34,9 +34,15 @@ theme_set(theme_minimal() + theme(legend.position = "bottom"))
 
 ```{r}
 homicide_df =
-  read_csv("./data/homicide-data.csv", na = c("", "Unknown"))
-
-View(homicide_df)
+  read_csv("./data/homicide-data.csv", na = c("", "Unknown")) %>%
+  mutate(city_state = str_c(city, state),
+         resolution = case_when(
+           disposition == "Closed without arrest" ~ "unsolved",
+           disposition == "Open/No arrest" ~ "unsolved",
+           disposition == "Closed by arrest" ~ "solved",
+         )) %>%
+  relocate(city_state) %>%
+  filter(city_state != "TulsaAL")
 ```
 
 
