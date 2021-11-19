@@ -68,4 +68,25 @@ baltimore_test =
 baltimore_test %>%
   broom::tidy()
 ```
+```{r}
+#iterate across cities
+
+#write a function
+prop_test_function = function(city_df) {
+  city_summary =
+    city_df %>%
+    summarize(
+      unsolved = sum(resolution == "unsolved"),
+      n = n()
+    )
+  
+  city_test =
+    prop.test(
+      x = city_summary %>% pull(unsolved),
+      n = city_summary %>% pull(n))
+  
+  return(city_test)
+}
+
+```
 
