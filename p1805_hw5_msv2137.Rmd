@@ -69,9 +69,7 @@ baltimore_test %>%
   broom::tidy()
 ```
 ```{r}
-#iterate across cities
-
-#write a function
+#write a function to iterate across cities
 prop_test_function = function(city_df) {
   city_summary =
     city_df %>%
@@ -88,5 +86,21 @@ prop_test_function = function(city_df) {
   return(city_test)
 }
 
+```
+
+```{r}
+#iterate across all cities
+results_df =
+  homicide_df %>%
+  nest(data = uid:resolution) %>%
+  mutate(
+    test_results = map(data, prop_test_function),
+    tidy_results = map(test_results, broom::tidy)
+  ) %>%
+  select(city_state, tidy_results) %>%
+  unnest(tidy_results) %>%
+  select(city_state, estimate, starts_with("conf"))
+
+results_df
 ```
 
