@@ -124,4 +124,34 @@ results_df %>%
   geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
   theme(axis.text.x = element_text(angle = 90, vjust = .5, hjust = 1))
 ```
+# Problem 2
+
+```{r}
+#Create a tidy dataframe containing data from all participants, including the subject ID, arm, and observations over time
+files_df = 
+  tibble(
+    path = list.files("zip_data")
+  )
+
+files_df =
+  files_df %>%
+  mutate(
+    path = str_c("zip_data/", path),
+    study_df = map(.x = path, ~read_csv(.x))
+  ) %>%
+  unnest(study_df) %>%
+  pivot_longer(
+    week_1:week_8,
+    names_to = "week",
+    values_to = "observation") %>%
+  mutate(
+    week = as.numeric(str_replace(week, "week_", "")),
+    arm = str_extract(path, "/[a-z][a-z][a-z]"),
+    arm = str_remove(arm, "/"),
+    id = str_extract(path, "[0-9]+")
+  ) %>%
+  select(-path)
+
+files_df
+```
 
