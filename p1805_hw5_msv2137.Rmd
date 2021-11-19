@@ -156,7 +156,7 @@ files_df
 ```
 
 ```{r}
-# Make a spaghetti plot showing observations on each subject over time, and comment on differences between groups.
+# Make a spaghetti plot showing observations on each subject over time
 
 files_df %>%
   ggplot(aes(x = week, y = observation, color = id, linetype = arm)) +
@@ -167,3 +167,14 @@ files_df %>%
     y = "Observation")
 ```
 Comment on the differences between the two groups.
+
+# Problem 3
+
+```{r}
+set.seed(10)
+
+iris_with_missing = iris %>% 
+  map_df(~replace(.x, sample(1:150, 20), NA)) %>%
+  mutate(Species = as.character(Species))
+```
+
