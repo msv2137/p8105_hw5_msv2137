@@ -1,0 +1,18 @@
+---
+title: "HW 5"
+author: "Malvika Venkataraman"
+date: "11/19/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Problem 1
+
+```{r}
+
+```
+
+
