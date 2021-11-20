@@ -33,7 +33,7 @@ theme_set(theme_minimal())
 # Problem 1
 
 For this problem, I'm using data from the Washington Post that contains information on homicides in 50 large U.S. cities.
-```{r}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 homicide_df_raw =
   read_csv("./data/homicide-data.csv")
 
@@ -42,7 +42,7 @@ homicide_df_raw
 The raw data contains information on the date, victim name, race, age, sex, the city, the state, the longitude and latitude coordinates and the disposition. The raw data has `r nrow(homicide_df_raw)` rows and `r ncol(homicide_df_raw)` columns.
 
 First, I'm going to create a city state variable, and clean the data a little.
-```{r}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 homicide_df =
   read_csv("./data/homicide-data.csv", na = c("", "Unknown")) %>%
   mutate(city_state = str_c(city, state),
@@ -86,7 +86,8 @@ baltimore_test =
     n = baltimore_summary %>% pull(n))
 
 baltimore_test %>%
-  broom::tidy()
+  broom::tidy() %>%
+  select(estimate, starts_with("conf"))
 ```
 
 I'm now going to do this for all the cities in my dataset. 
@@ -144,7 +145,7 @@ The graph shows that Richmond, VA has the lowest proportion of unsolved homicide
 # Problem 2
 
 For this problem, I'll be examining data from a longitudinal study that included a control arm and an experimental arm. I first need to create a tidy dataframe containing data from all participants, including the subject ID, arm, and observations over time.
-```{r}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
 #dataframe containing all file names
 files_df = 
   tibble(
