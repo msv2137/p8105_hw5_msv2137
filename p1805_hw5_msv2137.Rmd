@@ -32,6 +32,16 @@ theme_set(theme_minimal())
 
 # Problem 1
 
+For this problem, I'm using data from the Washington Post that contains information on homicides in 50 large U.S. cities.
+```{r}
+homicide_df_raw =
+  read_csv("./data/homicide-data.csv")
+
+homicide_df_raw
+```
+The raw data contains information on the date, victim name, race, age, sex, the city, the state, the longitude and latitude coordinates and the disposition. The raw data has `r nrow(homicide_df_raw)` rows and `r ncol(homicide_df_raw)` columns.
+
+First, I'm going to create a city state variable, and clean the data a little.
 ```{r}
 homicide_df =
   read_csv("./data/homicide-data.csv", na = c("", "Unknown")) %>%
@@ -45,8 +55,9 @@ homicide_df =
   filter(city_state != "TulsaAL")
 ```
 
+I'll then use the updated dataframe to summarize within cities to obtain the total number of homicides and the number or unsolved homicides.
 ```{r}
-#summarize within cities to obtain the total number of homicides and the number of unsolved homicides (those for which the disposition is “Closed without arrest” or “Open/No arrest”).
+#those for which the disposition is “Closed without arrest” or “Open/No arrest”
 homicide_df %>%
   group_by(city_state) %>%
   summarize(
@@ -55,11 +66,9 @@ homicide_df %>%
   )
 ```
 
-
+For the city of Baltimore, MD, I'll to estimate the proportion of homicides that are unsolved, as well as the confidence intervals from the resulting dataframe.
 ```{r}
 #focus on baltimore
-
-#baltimore df
 baltimore_df = 
   homicide_df %>%
   filter(city_state == "BaltimoreMD")
@@ -79,6 +88,8 @@ baltimore_test =
 baltimore_test %>%
   broom::tidy()
 ```
+
+I'm now going to do this for all the cities in my dataset. 
 ```{r}
 #write a function to iterate across cities
 prop_test_function = function(city_df) {
@@ -114,25 +125,33 @@ results_df =
 
 results_df
 ```
-
+I'll now create a plot that shows the estimates and confidence intervals for each city
 ```{r}
-#make a plot showing estimates and confidence intervals
 results_df %>%
   mutate(city_state = fct_reorder(city_state, estimate)) %>%
   ggplot(aes(x = city_state, y = estimate)) +
   geom_point() +
-  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) +
-  theme(axis.text.x = element_text(angle = 90, vjust = .5, hjust = 1))
+  geom_errorbar(aes(ymin = conf.low, ymax = conf.high)) + 
+  #organize cities according to the proportion of unsolved homicides
+  theme(axis.text.x = element_text(angle = 90, vjust = .5, hjust = 1)) +
+  labs(title = "Proportion of Unsolved Homicides and Confidence Intervals by City", 
+       x = "City and State",
+       y = "Estimate of Unsolved Homicides")
 ```
+
+The graph shows that Richmond, VA has the lowest proportion of unsolved homicides, and that Chicago, IL has the highest proportion of unsolved homicides.
+
 # Problem 2
 
+For this problem, I'll be examining data from a longitudinal study that included a control arm and an experimental arm. I first need to create a tidy dataframe containing data from all participants, including the subject ID, arm, and observations over time.
 ```{r}
-#Create a tidy dataframe containing data from all participants, including the subject ID, arm, and observations over time
+#dataframe containing all file names
 files_df = 
   tibble(
     path = list.files("zip_data")
   )
 
+#iterate over file names and read in data from each subject
 files_df =
   files_df %>%
   mutate(
@@ -140,6 +159,7 @@ files_df =
     study_df = map(.x = path, ~read_csv(.x))
   ) %>%
   unnest(study_df) %>%
+  #tidy the result
   pivot_longer(
     week_1:week_8,
     names_to = "week",
@@ -155,9 +175,8 @@ files_df =
 files_df
 ```
 
+I will then make a spaghetti plot to show observations on each subject over the 8 week study period.
 ```{r}
-# Make a spaghetti plot showing observations on each subject over time
-
 files_df %>%
   ggplot(aes(x = week, y = observation, color = id, linetype = arm)) +
   geom_line() + 
@@ -166,10 +185,12 @@ files_df %>%
     x = "Week",
     y = "Observation")
 ```
-Comment on the differences between the two groups.
+
+The graph clearly shows that subjects in the experimental arm had higher observation measurements that subjects in the control arm. By week 7, there is a clear separation between the two groups.
 
 # Problem 3
 
+For this problem, I'll start with a code chunk that loads data from the iris dataset and introduces some missing values in each column.
 ```{r}
 set.seed(10)
 
@@ -181,15 +202,16 @@ iris_with_missing = iris %>%
 #View(iris_with_missing)
 ```
 
-Fill in the missing values
+I'll fill in the missing values
 ```{r}
 #function to replace missing values
 replace_missing_vals = function(column) {
+  #for numeric, fill in with the mean of non-missing values
   if (is.numeric(column)) {
     column = ifelse(is.na(column), mean(column, na.rm = T), column)
     return(column)
     }
-  
+  #for character, fill in with "virginica"
   if (is.character(column)) {
     column = ifelse(is.na(column), "virginica", column)
     return(column)
@@ -197,13 +219,17 @@ replace_missing_vals = function(column) {
 }
 ```
 
+I will then apply to function to the columns of the initial dataframe
 ```{r}
 #replace missing values
 new_iris = 
   iris_with_missing %>%
   map_df(~replace_missing_vals(.x))
 
-View(new_iris)
+new_iris
+
+#view df
+#View(new_iris)
 ```
 
 
